@@ -24,7 +24,11 @@ jobs:
       
     # Runs cmake using the makefile
     - name: Find makefile and make
-      run: make
+      run: |
+        mkdir -p build
+        cd build
+        cmake ..
+        make
 
     # Upload main binary as artifact
     - name: Upload main as artifact
