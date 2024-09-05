@@ -26,11 +26,22 @@ jobs:
     - name: Find makefile and make
       run: make
 
+    # Upload main binary as artifact
+    - name: Upload main as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: main-binary
+        path: build/main
+
   test-1:
     runs-on: ubuntu-latest
     needs: build
 
     steps:
+    - name: Download main binary
+      uses: actions/download-artifact@v3
+      with:
+        name: main-binary
       # tee output.log logs the output of the program
       # check if output contains <text> using grep -q <text>
     - name: Run the program and check whether the output is correct
