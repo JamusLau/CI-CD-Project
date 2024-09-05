@@ -24,6 +24,7 @@ jobs:
       run: sudo apt-get install -y autoconf automake
       # Runs the configure script, to configure the build environment
     - name: configure
+      shell: bash
       run: |
         build/acrun.sh
         build/configure
