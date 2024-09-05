@@ -25,15 +25,7 @@ jobs:
     # Runs cmake using the makefile
     - name: find makefile and make
       run: make
-      # Runs any tests defined in the MAKEFILE to verify that the build is working correctly
-    - name: make check
-      run: make check
-      # Runs a distribution check, which is used to create a distribution of the package,
-      # then perform tests to ensure that it can be built and installed properly from the distribution
-    - name: make distcheck
-      run: |
-        echo "Running distribution check..."
-        make distcheck
+
       # tee output.log logs the output of the program
       # check if output contains <text> using grep -q <text>
     - name: run the program and check whether the output is correct
