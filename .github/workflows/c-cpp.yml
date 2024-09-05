@@ -48,8 +48,7 @@ jobs:
       # Set Permissions
     - name: Set Binary permissions
       run: chmod +x main
-      # tee output.log logs the output of the program
-      # check if output contains <text> using grep -q <text>
+      # Compare output with expected result
     - name: Run the program and check whether the output is correct
       run: |
         output=$(./main)
