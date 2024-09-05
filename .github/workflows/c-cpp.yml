@@ -31,10 +31,14 @@ jobs:
     - name: Run the program and check whether the output is correct
       run: |
         output=$(./main)
+        echo "Output: $output"
         expected="Hello, Github"
 
-        if [["$output" != "$expected"]]; then
-          echo "Test not passed..."
+        if [["$output" == "$expected"]]; then
+          echo "Test Passed..."
+          exit 0
+        else
+          echo "Test Failed..."
           exit 1
         fi
 
