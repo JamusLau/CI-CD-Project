@@ -19,22 +19,18 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
+
     - name: Setup C++ Environment
-      run: sudo apt-get install -y autoconf automake
-    - name: Make configure script executable
-      run: chmod +x acrun.sh
-      # Runs the configure script, to configure the build environment
-    - name: configure
-      shell: bash
-      run: |
-        acrun.sh
-      # chmod +x build/configure
-      # build/configure
-      # Runs cmake using the makefile
+      uses: gcc-actions/setup-gcc@v2
+      with:
+        gcc-version: '11'
+
+    # Runs cmake using the makefile
     - name: find makefile and make
       run: |
-        export MAKEFILE=Source/makefile
+        export MAKEFILE=makefile
         make -f $MAKEFILE
       # Runs any tests defined in the MAKEFILE to verify that the build is working correctly
     - name: make check
@@ -55,4 +51,7 @@ jobs:
           exit 1
         fi
         echo "Test Passed..."
+
+    
+
 
