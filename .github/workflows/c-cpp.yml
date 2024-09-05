@@ -31,8 +31,9 @@ jobs:
     - name: Run the program and check whether the output is correct
       run: |
         output=$(./main)
+        expected="Hello, Github"
 
-        if [["$output" != "Hello, World!"]]; then
+        if [["$output" != "$expected"]]; then
           echo "Test not passed..."
           exit 1
         fi
