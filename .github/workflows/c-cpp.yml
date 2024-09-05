@@ -23,12 +23,12 @@ jobs:
       uses: actions/checkout@v4
       
     # Runs cmake using the makefile
-    - name: find makefile and make
+    - name: Find makefile and make
       run: make
 
       # tee output.log logs the output of the program
       # check if output contains <text> using grep -q <text>
-    - name: run the program and check whether the output is correct
+    - name: Run the program and check whether the output is correct
       run: |
         ./main | tee output.log | grep -q "Hello, World!"
         if [ $? -ne 0 ]; then
