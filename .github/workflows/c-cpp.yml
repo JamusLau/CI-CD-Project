@@ -21,12 +21,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-
-    - name: Setup C++ Environment
-      uses: gcc-actions/setup-gcc@v2
-      with:
-        gcc-version: '11'
-
+      
     # Runs cmake using the makefile
     - name: find makefile and make
       run: |
