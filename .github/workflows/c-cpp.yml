@@ -29,8 +29,8 @@ jobs:
       shell: bash
       run: |
         build/acrun.sh
-        chmod +x build/configure
-        build/configure
+      # chmod +x build/configure
+      # build/configure
       # Runs cmake using the makefile
     - name: find makefile and make
       run: |
