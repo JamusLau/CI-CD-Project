@@ -22,13 +22,14 @@ jobs:
     - uses: actions/checkout@v4
     - name: Setup C++ Environment
       run: sudo apt-get install -y autoconf automake
+    - name: Make configure script executable
+      run: chmod +x build/acrun.sh
       # Runs the configure script, to configure the build environment
     - name: configure
       shell: bash
       run: |
-        git update-index --chmod=+x build/acrun.sh
         build/acrun.sh
-        git update-index --chmod+=x build.configure
+        chmod +x build/configure
         build/configure
       # Runs cmake using the makefile
     - name: find makefile and make
