@@ -27,8 +27,7 @@ jobs:
       # Runs the configure script, to configure the build environment
     - name: configure
       shell: bash
-      run: |
-        acrun.sh
+      run: acrun.sh
       # chmod +x build/configure
       # build/configure
       # Runs cmake using the makefile
