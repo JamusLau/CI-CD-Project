@@ -23,12 +23,12 @@ jobs:
     - name: Setup C++ Environment
       run: sudo apt-get install -y autoconf automake
     - name: Make configure script executable
-      run: chmod +x build/acrun.sh
+      run: chmod +x acrun.sh
       # Runs the configure script, to configure the build environment
     - name: configure
       shell: bash
       run: |
-        build/acrun.sh
+        acrun.sh
       # chmod +x build/configure
       # build/configure
       # Runs cmake using the makefile
