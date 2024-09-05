@@ -30,7 +30,7 @@ jobs:
       # check if output contains <text> using grep -q <text>
     - name: run the program and check whether the output is correct
       run: |
-        main | tee output.log | grep -q "Hello, World!"
+        ./main | tee output.log | grep -q "Hello, World!"
         if [ $? -ne 0 ]; then
           echo "Test failed. Closing..."
           exit 1
