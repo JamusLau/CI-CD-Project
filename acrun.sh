@@ -1,5 +1,3 @@
-aclocal
-
 # generates make file
 automake --add-missing
 
