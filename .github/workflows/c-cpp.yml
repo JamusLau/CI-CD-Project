@@ -27,7 +27,6 @@ jobs:
       run: |
         mkdir -p build
         cd build
-        cmake ..
         make
 
     # Upload main binary as artifact
