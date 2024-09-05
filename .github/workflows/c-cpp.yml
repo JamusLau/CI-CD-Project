@@ -24,9 +24,7 @@ jobs:
       
     # Runs cmake using the makefile
     - name: find makefile and make
-      run: |
-        export MAKEFILE=makefile
-        make -f $MAKEFILE
+      run: make
       # Runs any tests defined in the MAKEFILE to verify that the build is working correctly
     - name: make check
       run: make check
