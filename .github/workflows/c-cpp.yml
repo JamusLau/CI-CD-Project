@@ -25,7 +25,9 @@ jobs:
       # Runs the configure script, to configure the build environment
     - name: configure
       run: |
+        git update-index --chmod=+x build/acrun.sh
         build/acrun.sh
+        git update-index --chmod+=x build.configure
         build/configure
       # Runs cmake using the makefile
     - name: find makefile and make
