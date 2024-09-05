@@ -1,4 +1,5 @@
 #!/bin/sh
+cd build
 aclocal
 
 # generates make file
