@@ -40,10 +40,14 @@ jobs:
     needs: build
 
     steps:
+      # Download the main binary artifact
     - name: Download main binary
       uses: actions/download-artifact@v3
       with:
         name: main-binary
+      # Set Permissions
+    - name: Set Binary permissions
+      run: chmod +x main
       # tee output.log logs the output of the program
       # check if output contains <text> using grep -q <text>
     - name: Run the program and check whether the output is correct
