@@ -25,7 +25,6 @@ jobs:
     # Runs cmake using the makefile
     - name: Find makefile and make
       run: |
-        mkdir -p build
         cd build
         make
 
