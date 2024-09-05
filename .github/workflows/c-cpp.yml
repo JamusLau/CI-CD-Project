@@ -32,9 +32,9 @@ jobs:
       run: |
         output=$(./main)
         echo "Output: $output"
-        expected="Hello, Github"
+        expected="Hello, Github!"
 
-        if [["$output" == "$expected"]]; then
+        if [[ "$output" == "$expected" ]]; then
           echo "Test Passed..."
           exit 0
         else
