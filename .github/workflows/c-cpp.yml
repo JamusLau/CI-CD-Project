@@ -1,0 +1,30 @@
+name: C/C++ CI
+
+# Define events that trigger the workflow
+on:
+  # Define what kind of action for jobs to trigger
+  push:
+    # Trigger for specific branches
+    branches: [ "main" ]
+  pull_request:
+    types:    [ "closed" ]
+    branches: [ "main" ]
+  # Manual Trigger of jobs
+  workflow_dispatch:
+
+jobs:
+  build:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Building using cmake
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    - name: configure
+      run: ./configure
+    - name: make
+      run: make
+    - name: make check
+      run: make check
+    - name: make distcheck
+      run: make distcheck
