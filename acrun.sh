@@ -1,4 +1,3 @@
-#!/bin/sh
 aclocal
 
 # generates make file
