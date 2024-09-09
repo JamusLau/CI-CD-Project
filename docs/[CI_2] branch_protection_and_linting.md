@@ -5,6 +5,7 @@ Step 2 is where steps are taken to ensure the branch's integrity. as well as lin
 
 1. Always do code reviews before committing.
 2. Always do pull requests instead of direcly merging into a branch.
+
 # Code Linting
 ## 1. Create a GitHub Actions workflow.
 
