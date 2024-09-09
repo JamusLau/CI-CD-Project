@@ -17,11 +17,11 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     # Building using cmake
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-      
+
     # Runs cmake using the makefile
     - name: Find makefile and make
       run: |
@@ -66,6 +66,6 @@ jobs:
         echo "Test Passed..."
 
 
-    
+
 
 
