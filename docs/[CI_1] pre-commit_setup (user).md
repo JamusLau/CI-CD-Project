@@ -1,3 +1,8 @@
+# Overview
+Step 1 is a check using a tool on the developer side to check the code before they are even committed.
+
+pre-commit is used to run simple hooks to check your code before they are committed to a branch / a pull request.
+
 # Setup
 ## 1. Ensure Python is installed.
 - Minimum Version: **3.6.0**

@@ -1,3 +1,8 @@
+# Overview
+Step 1 is a check using a tool on the developer side to check the code before they are even committed.
+
+pre-commit is used to run simple hooks to check your code before they are committed to a branch / a pull request.
+
 # Setup
 ## 1. Ensure Python is installed.
 - Minimum Version: **3.6.0**
@@ -19,9 +24,9 @@ Install pre-commit package manager using `pip install pre-commit`.
 ## 4. Create a pre-commit configuration.
 Create a file named `.pre-commit-config.yaml` or generate a basic one using `pre-commit sample-config`.
 
-Basic configuration should look something like this:
+Configuration should look something like this:
 
-```
+```yaml
 fail_fast: false
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -48,6 +53,23 @@ You can manually run the pre-commit checks by using `pre-commit run --all-files`
 
 Auto update hooks using `pre-commit autoupdate`.
 
-# Links
+# Link & examples
 - [pre-commit](https://pre-commit.com/)
 - [gitleaks](https://github.com/gitleaks/gitleaks)
+```yaml
+repos:
+   - repo: https://github.com/gitleaks/gitleaks
+     rev: v8.18.4
+     hooks:
+       - id: gitleaks
+```
+- [cpp-linter](https://github.com/cpp-linter/cpp-linter-hooks)
+```yaml
+  - repo: https://github.com/cpp-linter/cpp-linter-hooks
+    rev: v0.5.1  # Use the ref you want to point at
+    hooks:
+      - id: clang-format
+        args: [--style=Google] # Other coding style: LLVM, GNU, Chromium, Microsoft, Mozilla, WebKit.
+      - id: clang-tidy
+        args: [--checks='boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*']
+```
