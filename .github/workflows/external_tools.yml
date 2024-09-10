@@ -51,10 +51,10 @@ jobs:
         uses: trufflesecurity/trufflehog@main
         continue-on-error: true
         with:
-          path: ./
-          base: "${{ github.event.repository.default_branch }}"
-          head: HEAD
-          extra_args: --debug
+          # path: ./
+          # base: "${{ github.event.repository.default_branch }}"
+          # head: HEAD
+          extra_args: --debug --only-verified
 
       - name: Scan Results Status
         if: steps.trufflehog.outcome == 'failure'
