@@ -13,11 +13,11 @@
 - To setup pre-commit hooks to the repo for checks before commit.
 - To lint code and setup github actions for linting.
 ### Tasks
+- [x] pre-commit hook
 - [x] pre-commit hook guide
 - [x] Code linting through github actions
-- [x] Code linting as a hook
 - [x] Guide for github actions code linting
-- [x] pre-commit hook
+- [ ] aws keys scanner through trufflehog on github actions
 
 ## October 1st - October 15th
 ### Overview [Build Stage]

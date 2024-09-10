@@ -37,10 +37,6 @@ repos:
       - id: detect-private-key
       - id: detect-aws-credentials
       - id: trailing-whitespace
-  - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.18.4
-    hooks:
-      - id: gitleaks
 ```
 
 ## 5. Run pre-commit install.
@@ -55,22 +51,3 @@ Auto update hooks using `pre-commit autoupdate`.
 
 # Link & examples
 - [pre-commit](https://pre-commit.com/)
-- [gitleaks](https://github.com/gitleaks/gitleaks)
-- download `pre-commit.py` from the repo's git: `gitleaks/scripts/pre-commit.py`, and place it into your repo's `.git/hooks/`
-```yaml
-repos:
-   - repo: https://github.com/gitleaks/gitleaks
-     rev: v8.18.4
-     hooks:
-      - id: gitleaks
-```
-- [cpp-linter](https://github.com/cpp-linter/cpp-linter-hooks)
-```yaml
-  - repo: https://github.com/cpp-linter/cpp-linter-hooks
-    rev: v0.5.1  # Use the ref you want to point at
-    hooks:
-      - id: clang-format
-        args: [--style=Google] # Other coding style: LLVM, GNU, Chromium, Microsoft, Mozilla, WebKit.
-      - id: clang-tidy
-        args: [--checks='boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*']
-```
