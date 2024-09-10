@@ -42,7 +42,7 @@ jobs:
         shell: bash
     steps:
       - name: Check code for secrets
-        uses: actions/checkoutv3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
