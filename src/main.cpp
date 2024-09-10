@@ -1,6 +1,7 @@
-#include <iostream> // Include the input/output stream library
+#include <iostream>  // Include the input/output stream library
 
 int main() {
-    std::cout << "Hello, Github!" << std::endl; // Print "Hello, World!" to the console
-    return 0; // Return 0 to indicate successful completion
+  std::cout << "Hello, Github!"
+            << std::endl;  // Print "Hello, World!" to the console
+  return 0;                // Return 0 to indicate successful completion
 }

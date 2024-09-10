@@ -56,12 +56,13 @@ Auto update hooks using `pre-commit autoupdate`.
 # Link & examples
 - [pre-commit](https://pre-commit.com/)
 - [gitleaks](https://github.com/gitleaks/gitleaks)
+- download `pre-commit.py` from the repo's git: `gitleaks/scripts/pre-commit.py`, and place it into your repo's `.git/hooks/`
 ```yaml
 repos:
    - repo: https://github.com/gitleaks/gitleaks
      rev: v8.18.4
      hooks:
-       - id: gitleaks
+      - id: gitleaks
 ```
 - [cpp-linter](https://github.com/cpp-linter/cpp-linter-hooks)
 ```yaml
