@@ -10,7 +10,7 @@ CXXFLAGS = -Wall -g
 TARGET = main
 
 # The source files
-SRCS = ./src/main.cpp
+SRCS = ./src/hello-world.cpp
 
 # Object files (generated from source files)
 OBJS = $(SRCS:.cpp=.o)

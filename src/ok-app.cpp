@@ -32,7 +32,7 @@ private:
 };
 
 int main() {
-    const std::string address = "http://0.0.0.0:8080"; // Listen on all interfaces
+    const std::string address = "http://127.0.0.1:3000"; // Listen on all interfaces
     OkAPI api(address);
     api.start();
 
