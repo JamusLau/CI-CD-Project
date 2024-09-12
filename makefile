@@ -10,7 +10,7 @@ CXXFLAGS = -Wall -g
 TARGET = main
 
 # The source files
-SRCS = ../src/main.cpp
+SRCS = ./src/main.cpp
 
 # Object files (generated from source files)
 OBJS = $(SRCS:.cpp=.o)
@@ -23,7 +23,7 @@ $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS)
 
 # Rule to compile the source files into object files
-%.o: %.cpp
+./src/%.o: ./src/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Clean up build artifacts

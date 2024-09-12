@@ -17,7 +17,7 @@
 - [x] pre-commit hook guide
 - [x] Code linting through github actions
 - [x] Guide for github actions code linting
-- [ ] aws keys scanner through trufflehog on github actions
+- [x] aws keys scanner through trufflehog on github actions
 
 ## October 1st - October 15th
 ### Overview [Build Stage]
@@ -25,7 +25,7 @@
 
 ### Tasks
 - [ ] Learn Docker basics
-- [ ] Create container images of application
+- [x] Create container images of application
 - [ ] Run unit tests within image
 - [ ] Code compilation within container image
 - [ ] Code coverage check - check if developers are putting in unit tests
