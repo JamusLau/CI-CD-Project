@@ -6,7 +6,7 @@ FROM ubuntu:latest
 WORKDIR /app
 
 # Copying the makefile and source files to the woking dir
-COPY ../src /app/src
+COPY ./src /app/src
 
 # Install any necessary packages (if needed)
 RUN apt-get update && apt-get install -y \
