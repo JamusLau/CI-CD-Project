@@ -159,3 +159,45 @@ COPY ./tests app/tests
 Build using targets: \
 `docker build --target build -t myapp:build` \
 `docker build --target testBuild -t myapp:testingBuild`
+
+
+static application security testing using gitlab sast
+- uses linux based gitlab runner
+- php min gitlab version - 16.11
+- c# min gitlab version - 15.4
+
+```yml
+include:
+    - template: Jobs/SAST.gitlab-ci.yml
+```
+
+
+
+secret detection
+- gitlab inbuilt secret detection
+```yml
+include:
+    - template: Jobs/Secret-Detection.gitlab-ci.yml
+```
+
+Creating a local runner
+create a volume to store config
+`docker volume create gitlab-runner-config`
+
+start the gitlab runner using the created volume
+```yml
+docker run -d --name gitlab-runner --restart always \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v gitlab-runner-config:/etc/gitlab-runner \
+    gitlab/gitlab-runner:latest
+```
+
+to register the runner
+`docker exec -it <runner-container-name> gitlab-runner register`
+provide given information
+`gitlab instance url` - gitlab url
+`registration token` - token can be found under the project's settings: Settings > CI/CD > Runners > Set up a specific Runner manually
+`Description` - Runner name
+`Tags` - to tag the runner, so runners can be used for specific jobs
+`Executor` - use docker
+`Default Docker Image` - choose the default docker image e.g. ubuntu:latest
