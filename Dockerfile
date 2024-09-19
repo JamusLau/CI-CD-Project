@@ -1,47 +1,12 @@
-############################### Using ubuntu ###############################################
-# using an official gcc compiler image as the base image
-FROM ubuntu:latest
-
-# Set the working directory inside the container
-WORKDIR /app
-
-# Copying the makefile and source files to the woking dir
-COPY ./src /app/src
-
-# Install any necessary packages (if needed)
-RUN apt-get update && apt-get install -y \
-    g++ \
-    libcpprest-dev \
-    libboost-all-dev \
-    libssl-dev \
-    cmake
-
-# Run make to build the application
-RUN g++ -o ok_app src/ok-app.cpp -lcpprest -lboost_system -lboost_thread -lboost_chrono -lboost_random -lssl -lcrypto
-
-# Expose the port on which the API will listen
-EXPOSE 8080
-
-# Specify the command to run the application
-CMD ["./ok_app"]
-#################################################################################
-############################### Using Makefile #############################################
-# # using an official gcc compiler image as the base image
-# FROM gcc:latest
-
-# # Set the working directory inside the container
-# WORKDIR /app
-
-# # Copying the makefile and source files to the woking dir
-# COPY ../src /app/src
-# COPY makefile /app/
-
-# # Install any necessary packages (if needed)
-# RUN apt-get update && apt-get install -y make
-
-# # Run make to build the application
-# RUN make
-
-# # Specify the command to run the application
-# CMD ["./main"]
-#################################################################################
+FROM jenkins/jenkins:2.462.2-jdk11
+USER root
+RUN apt-get update && apt-get install -y lsb-release python3-pip
+RUN curl -fsSLo /usr/share/keyrings/docker-archive-keyring.asc \
+  https://download.docker.com/linux/debian/gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) \
+  signed-by=/usr/share/keyrings/docker-archive-keyring.asc] \
+  https://download.docker.com/linux/debian \
+  $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
+RUN apt-get update && apt-get install -y docker-ce-cli
+USER jenkins
+RUN jenkins-plugin-cli --plugins "blueocean:1.25.3 docker-workflow:1.28"
