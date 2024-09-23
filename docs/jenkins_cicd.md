@@ -1,3 +1,20 @@
+| Feature | GitLab CICD | Jenkins |
+| - | - | - |
+| Runners | Self-Hosted / GitLab hosted with option to pay for more minutes | Self-Hosted |
+| Jobs | Runners are dynamically provisioned based on demand | Runners will need to be created, but Jobs can be distributed by user |
+| Management | GitLab users have to be assigned high-level roles to be able to edit the CI/CD pipeline | Jenkins admin can create user accounts for users to manage the pipeline |
+| Resources | Will require proper resource management | Will require proper resource management |
+| Flexibility | Most features are controlled by GitLab | Highly customisable with vast amounts of plugins to aid pipeline |
+| Security | Built in secret detection | Various plugins to manage secret detection |
+| | Can define protected variables, to be accessed only in certain environments | Role-Based access through plugins |
+| | In Built automated dependency vulnerability scanning | Plugins to support dependency vulnerability check |
+| Audit Logs | Has audit logs for tracking | Has audit logs for tracking |
+| TLDR | More integrated features for existing projects in GitLab, less time needed to integrate security features | More complex setup but more flexible in implementation |
+| | Simplified management as most things are done by GitLab | More scalable in the future, if environments become more complex |
+
+
+
+
 ## References
 https://github.com/devopsjourney1/jenkins-101
 
@@ -73,7 +90,7 @@ Enable options as needed.
     ```
 
     2. To connect to docker container running the agent: find the `IPAddress` under `Networks > Jenkins > IPAdress`, after running the command `docker inspect <container_id> | grep IPAddress`, then enter the IPAddress it in the `Docker Cloud Details` > `Docker Host URI` of the cloud you just created, in the format: `tcp://<ip>:2375`.
-         - Note: To run agent with Jenkins, use the locak IP of `127.0.0.1`.
+         - Note: To run agent with Jenkins, use the local IP of `127.0.0.1`.
     3. Check `Enabled` and Save.
     4. Go to the the cloud you just created, click `Configure` > `Docker Agent Templates`, `Create`.
         - `Labels` - Used to tell Jenkins which agents to use for the build
@@ -96,3 +113,86 @@ Enable options as needed.
    1. In your Job's Configure, `General Settings > Restrict where this project can be run`
    2. Enter the label of the agent you just created
 in your job's configure
+
+## Deployment / Jenkinsfile Example
+1. Install git plugin on Jenkins
+2. Go add your git credentials in Manage Jenkins > Manage Credentials
+```groovy
+pipeline {
+   agent any
+
+   environment {
+      DOCKER_USER = ''
+      DOCKER_IMAGE = 'image:${BUILD_NUMBER}' //using build number for image tag
+
+      GITLAB_URL = '' //without https
+      GITLAB_BRANCH = 'main'
+      GITLAB_CREDENTIALS = '${GIT_USERNAME}:${GIT_PASSWORD}' //set in jenkins
+   }
+
+   options {
+      skipStagesAfterUnstable()
+   }
+
+   stages {
+      stage('Clone Repository') {
+         steps {
+            echo 'Cloning Repository...'
+            withCredentials([usernamePassword(credentialsId: 'your-credentials-id', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+               git branch: $GITLAB_BRANCH, url: 'https://$GITLAB_CREDENTIALS@$GITLAB_URL'
+            }
+         }
+      }
+      stage('Environment Setup') { // install requirements to do testing
+         steps {
+            sh '''
+            cd ./path/to/requirements.txt
+            pip install -r requirements.txt
+            '''
+         }
+      }
+      stage('Unit Testing') { // run tests here
+         steps {
+            echo 'Testing'
+            script {
+               sh './filepath/to/tests/py'
+            }
+         }
+      }
+      stage('Build') {
+         steps {
+            // files are removed in the dockerfile
+            echo 'Building Image as $DOCKER_USER/$DOCKER_IMAGE'
+            script {
+               sh 'docker build -t $DOCKER_IMAGE .'
+            }
+         }
+      }
+      stage('Push to Docker Hub') {
+         steps {
+            script {
+               sh 'docker push DOCKER_USER:DOCKER_IMAGE'
+            }
+         }
+      }
+      stage('Deploy - Staging') {
+         steps {
+            echo 'Deploying'
+         }
+      }
+      stage('Deploy - Production') {
+         steps {
+            echo 'Deploying'
+         }
+      }
+   }
+
+   post {
+      always {
+         // clean up
+         sh 'docker rmi $DOCKER_IMAGE || true'
+      }
+   }
+}
+
+```
