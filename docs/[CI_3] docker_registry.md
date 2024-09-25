@@ -15,3 +15,5 @@ Example:
    - Push the tagged Image into the repo using `docker push username/TestAppRepo:v1.0`
    - You can push an updated version of the Image by using the same command, just a different tag: `docker tag TestApp username/TestAppRepo:v1.1`
 
+To pull an Image or from a repository:
+Use `docker pull username/image_name:tag` or `docker pull image_name:tag`

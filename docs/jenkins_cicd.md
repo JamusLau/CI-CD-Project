@@ -83,10 +83,10 @@ Enable options as needed.
    3. Enter name, select Docker and Create.
 
 4. Create an agent on Docker
-   1. First create a container running the alpine socat image, acts as a proxy from the local jenkins container to the agent
+   1. First create a container running the alpine socat image, acts as a proxy from the local jenkins container to the agent, forwards the traffic from Jenkins to the Docker Desktop container on the host machine. Use different port numbers for different agents.
 
     ```powershell
-    docker run -d --restart=always -p 127.0.0.1:2376:2375 --network jenkins -v /var/run/docker.sock:/var/run/docker.sock alpine/socat tcp-listen:2375,fork,reuseaddr unix-connect:/var/run/docker.sock
+    docker run -d --restart=always -p 127.0.0.1:<port>:2375 --network jenkins -v /var/run/docker.sock:/var/run/docker.sock alpine/socat tcp-listen:2375,fork,reuseaddr unix-connect:/var/run/docker.sock
     ```
 
     2. To connect to docker container running the agent: find the `IPAddress` under `Networks > Jenkins > IPAdress`, after running the command `docker inspect <container_id> | grep IPAddress`, then enter the IPAddress it in the `Docker Cloud Details` > `Docker Host URI` of the cloud you just created, in the format: `tcp://<ip>:2375`.
@@ -171,7 +171,7 @@ pipeline {
       stage('Push to Docker Hub') {
          steps {
             script {
-               sh 'docker push DOCKER_USER:DOCKER_IMAGE'
+               sh 'docker push $DOCKER_USER/$DOCKER_IMAGE'
             }
          }
       }
