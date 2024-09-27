@@ -26,24 +26,24 @@
 # CMD ["./ok_app"]
 #################################################################################
 ############################### Using Makefile #############################################
-# # using an official gcc compiler image as the base image
+# using an official gcc compiler image as the base image
 # FROM gcc:latest
 
 # # Set the working directory inside the container
 # WORKDIR /app
 
 # # Copying the makefile and source files to the woking dir
-# COPY ../src /app/src
-# COPY makefile /app/
+# COPY ./src /app/src
+# COPY ./build /app/build
 
 # # Install any necessary packages (if needed)
 # RUN apt-get update && apt-get install -y make
 
 # # Run make to build the application
-# RUN make
+# RUN make -C ./build/ -f makefile
 
 # # Specify the command to run the application
-# CMD ["./main"]
+# # CMD ["./main"]
 #################################################################################
 ############################### Using Makefile #############################################
 # Use the official Microsoft Visual Studio Build Tools image
@@ -57,6 +57,7 @@ WORKDIR /app
 
 # Copy the source file to the working directory
 COPY ./src /app/src
+COPY ./build /app/build
 
 # Set the shell to PowerShell
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
@@ -64,21 +65,21 @@ SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPref
 # Install Chocolatey
 RUN Set-ExecutionPolicy Bypass -Scope Process -Force; \
     [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; \
-    iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'));
+    iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'));
 
 # Verify Chocolatey Installation
 RUN choco --version;
 
 # Install build dependencies
-RUN choco install visualstudio2019buildtools --allWorkloads --includeRecommended --includeOptional --passive -y; \
-    choco install powershell-core -y
+# RUN choco install powershell-core -y; \
+#     choco install cmake -y; \
+RUN choco install make -y; \
+    choco install mingw -y;
+
 
 # Set the shell to PowerShell
-SHELL ["pwsh", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+RUN cd ./build; \
+    make
 
-# Compile the C++ program
-RUN cd "C:\BuildTools\Common7\Tools\"; \
-    & .\VsDevCmd.bat -arch=amd64 && \
-    cl /EHsc src/main.cpp /Fe:main.exe
-
+#
 #################################################################################

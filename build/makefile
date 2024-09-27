@@ -7,13 +7,13 @@ CXX = g++
 CXXFLAGS = -Wall -g
 
 # The target executable
-TARGET = main
+TARGET = hello-world
 
 # The source files
-SRCS = ./src/hello-world.cpp
+SRCS = ../src/hello-world.cpp
 
 # Object files (generated from source files)
-OBJS = $(SRCS:.cpp=.o)
+OBJS = $(SRCS:../src/%.cpp=%.o)
 
 # Default rule: build the target
 all: $(TARGET)
@@ -23,7 +23,7 @@ $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS)
 
 # Rule to compile the source files into object files
-./src/%.o: ./src/%.cpp
+%.o: ../src/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Clean up build artifacts

@@ -76,6 +76,7 @@ To build the image, use `docker build -t <name>:<tag> .`,
 - `-t` tags the image with `<name>`.
 - `<tag>` is optional but useful for tagging version onto Image.
 - `.` at the end tells `docker build` to look for the Dockerfile in the current directory.
+- Use `-f /path/to/dockerfile` to specify a dockerfile to use instead: `docker build -f /path/to/dockerfile -t <name>:<tag>`
 
 ## Running a Container with an Image
 

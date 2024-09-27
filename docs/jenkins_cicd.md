@@ -1,27 +1,25 @@
-| Feature | GitLab CICD | Jenkins |
-| - | - | - |
-| Runners | Self-Hosted / GitLab hosted with option to pay for more minutes | Self-Hosted |
-| Jobs | Runners are dynamically provisioned based on demand | Runners will need to be created, but Jobs can be distributed by user |
-| Management | GitLab users have to be assigned high-level roles to be able to edit the CI/CD pipeline | Jenkins admin can create user accounts for users to manage the pipeline |
-| Resources | Will require proper resource management | Will require proper resource management |
-| Flexibility | Most features are controlled by GitLab | Highly customisable with vast amounts of plugins to aid pipeline |
-| Security | Built in secret detection | Various plugins to manage secret detection |
-| | Can define protected variables, to be accessed only in certain environments | Role-Based access through plugins |
-| | In Built automated dependency vulnerability scanning | Plugins to support dependency vulnerability check |
-| Audit Logs | Has audit logs for tracking | Has audit logs for tracking |
-| TLDR | More integrated features for existing projects in GitLab, less time needed to integrate security features | More complex setup but more flexible in implementation |
-| | Simplified management as most things are done by GitLab | More scalable in the future, if environments become more complex |
+GitLab Push/MR -> GitLab Checking before Build -> Jenkins Build -> Jenkins Testing -> Deployment
 
+Stage 2: Syntax checking etc.
+Stage 3: Trigger jenkins build
+update status in gitlab
+
+Stage 4: Trigger jenkins build testing
+update status in gitlab
+
+Stage 5: Deployment
 
 
 
 ## References
 https://github.com/devopsjourney1/jenkins-101
+https://docs.gitlab.com/ee/integration/jenkins.html
+
 
 ## Running Jenkins as a Docker Container
 ### 1. Create a Dockerfile to pull the latest Jenkins version and build an Image.
 ```Dockerfile
-FROM jenkins/jenkins:<version> #2.462.2-jdk11
+FROM jenkins/jenkins:<version> #2.462.2-jdk21
 USER root
 RUN apt-get update && apt-get install -y lsb-release python3-pip
 RUN curl -fsSLo /usr/share/keyrings/docker-archive-keyring.asc \
@@ -195,4 +193,22 @@ pipeline {
    }
 }
 
+```
+
+Agent with Docker:
+```Dockerfile
+FROM jenkins/inbound-agent:latest
+
+USER root
+RUN apt-get update && apt-get install -y docker.io
+USER jenkins
+```
+
+Python Agents
+```Dockerfile
+FROM jenkins/agent:alpine-jdk11
+USER root
+RUN apk add python3
+RUN apk add py3-pip
+USER jenkins
 ```
