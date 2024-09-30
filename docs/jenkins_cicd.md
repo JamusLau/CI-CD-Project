@@ -81,13 +81,16 @@ Enable options as needed.
    3. Enter name, select Docker and Create.
 
 4. Create an agent on Docker
-   1. First create a container running the alpine socat image, acts as a proxy from the local jenkins container to the agent, forwards the traffic from Jenkins to the Docker Desktop container on the host machine. Use different port numbers for different agents.
+   1. First create a container running the alpine socat image, acts as a proxy from the local jenkins container to the agent, forwards the traffic from Jenkins to the Docker Desktop container on the host machine.
+      - If running jenkins as a container, the docker host uri field needs to be entered with the unix/tcp address of the docker host. But since jenkins is being run as a container, container can't reach the docker host unix port.
+      - So another container is created to mediate between docker host and jenkins container, publishing the docker host's unix port as its tcp port.
+      - after creation, can go back to the docker configuration in jenkins and enter `tcp://socat-container-ip:2375`
 
     ```powershell
     docker run -d --restart=always -p 127.0.0.1:<port>:2375 --network jenkins -v /var/run/docker.sock:/var/run/docker.sock alpine/socat tcp-listen:2375,fork,reuseaddr unix-connect:/var/run/docker.sock
     ```
 
-    2. To connect to docker container running the agent: find the `IPAddress` under `Networks > Jenkins > IPAdress`, after running the command `docker inspect <container_id> | grep IPAddress`, then enter the IPAddress it in the `Docker Cloud Details` > `Docker Host URI` of the cloud you just created, in the format: `tcp://<ip>:2375`.
+    2. To connect to the proxy container: find the `IPAddress` under `Networks > Jenkins > IPAdress`, after running the command `docker inspect <container_id> | grep IPAddress`, then enter the IPAddress it in the `Docker Cloud Details` > `Docker Host URI` of the cloud you just created, in the format: `tcp://<ip>:2375`.
          - Note: To run agent with Jenkins, use the local IP of `127.0.0.1`.
     3. Check `Enabled` and Save.
     4. Go to the the cloud you just created, click `Configure` > `Docker Agent Templates`, `Create`.
@@ -159,11 +162,14 @@ pipeline {
       }
       stage('Build') {
          steps {
+            // use this line to update status on github
+            updateGitlabCommitStatus name: 'build', state: 'pending'
             // files are removed in the dockerfile
             echo 'Building Image as $DOCKER_USER/$DOCKER_IMAGE'
             script {
                sh 'docker build -t $DOCKER_IMAGE .'
             }
+            updateGitlabCommitStatus name: 'build', state: 'success'
          }
       }
       stage('Push to Docker Hub') {
@@ -195,18 +201,25 @@ pipeline {
 
 ```
 
-Agent with Docker:
-```Dockerfile
-FROM jenkins/inbound-agent:latest
 
+## Creating Custom Agents
+
+1. Create an Image containing the agent using `docker build -f <docker/filepat> -t <image_name> .`
+2. Upload into docker hub for usage
+
+
+Example Agents:
+```Dockerfile
+# Docker agents for image building
+FROM jenkins/inbound-agent:latest
 USER root
 RUN apt-get update && apt-get install -y docker.io
 USER jenkins
 ```
 
-Python Agents
 ```Dockerfile
-FROM jenkins/agent:alpine-jdk11
+## Python agents to run python scripts
+FROM jenkins/agent:alpine-jdk21
 USER root
 RUN apk add python3
 RUN apk add py3-pip
