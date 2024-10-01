@@ -120,7 +120,7 @@ in your job's configure
 2. Go add your git credentials in Manage Jenkins > Manage Credentials
 ```groovy
 pipeline {
-   agent any
+   agent none
 
    environment {
       DOCKER_USER = ''
@@ -152,7 +152,17 @@ pipeline {
             '''
          }
       }
+      stage('Code Syntax Checking (using Cppcheck)') {
+         agent { label '' }
+         steps {
+            script {
+               sh 'cppcheck --enable=all --inconclusive'
+               sh 'cppcheck filepath'
+            }
+         }
+      }
       stage('Unit Testing') { // run tests here
+         agent { label 'name' }
          steps {
             echo 'Testing'
             script {
@@ -223,5 +233,13 @@ FROM jenkins/agent:alpine-jdk21
 USER root
 RUN apk add python3
 RUN apk add py3-pip
+USER jenkins
+```
+
+```Dockerfile
+## To run cppcheck
+FROM gcc:latest
+USER root
+RUN apt-get update && apt-get install -y cppcheck clang-tidy
 USER jenkins
 ```
