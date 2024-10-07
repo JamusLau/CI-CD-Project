@@ -9,6 +9,14 @@ update status in gitlab
 
 Stage 5: Deployment
 
+| | Table of Contents |
+|:-:|:-:|
+|1| [Running Jenkins as Docker Container](#running-jenkins-as-a-docker-container) |
+|2| [Creating Jobs in Jenkins](#jobs-in-jenkins) |
+|3| [Agents](#agents) |
+|4| [Custom Agents](#creating-custom-agents) |
+|5| [Deployment / Jenkinsfile example](#deployment--jenkinsfile-example) |
+|6| [Configuring GitLab with Jenkins](#integrating-gitlab-with-jenkins) |
 
 
 ## References
@@ -115,6 +123,39 @@ Enable options as needed.
    2. Enter the label of the agent you just created
 in your job's configure
 
+## Creating Custom Agents
+
+1. Create an Image containing the agent using `docker build -f <docker/filepat> -t <image_name> .`
+2. Upload into docker hub for usage
+
+Note: Get the base image as needed by use case.
+
+Example Agents:
+```Dockerfile
+# Docker agents for image building
+FROM jenkins/inbound-agent:latest
+USER root
+RUN apt-get update && apt-get install -y docker.io
+USER jenkins
+```
+
+```Dockerfile
+## Python agents to run python scripts
+FROM jenkins/agent:alpine-jdk21
+USER root
+RUN apk add python3
+RUN apk add py3-pip
+USER jenkins
+```
+
+```Dockerfile
+## To run cppcheck
+FROM gcc:latest
+USER root
+RUN apt-get update && apt-get install -y cppcheck clang-tidy
+USER jenkins
+```
+
 ## Deployment / Jenkinsfile Example
 1. Install git plugin on Jenkins
 2. Go add your git credentials in Manage Jenkins > Manage Credentials
@@ -211,35 +252,35 @@ pipeline {
 
 ```
 
+## Integrating GitLab with Jenkins
+https://plugins.jenkins.io/gitlab-plugin/
+https://docs.gitlab.com/ee/integration/jenkins.html
 
-## Creating Custom Agents
-
-1. Create an Image containing the agent using `docker build -f <docker/filepat> -t <image_name> .`
-2. Upload into docker hub for usage
-
-
-Example Agents:
-```Dockerfile
-# Docker agents for image building
-FROM jenkins/inbound-agent:latest
-USER root
-RUN apt-get update && apt-get install -y docker.io
-USER jenkins
-```
-
-```Dockerfile
-## Python agents to run python scripts
-FROM jenkins/agent:alpine-jdk21
-USER root
-RUN apk add python3
-RUN apk add py3-pip
-USER jenkins
-```
-
-```Dockerfile
-## To run cppcheck
-FROM gcc:latest
-USER root
-RUN apt-get update && apt-get install -y cppcheck clang-tidy
-USER jenkins
-```
+1. Install the GitLab plugin on Jenkins.
+2. Add your GitLab project to the Jenkins configuration.
+   1. `Manage Jenkins > System Configuration > System`, and scroll until you find GitLab
+   2. Add a connection by providing a `Connection Name`, `GitLab host URL` and `Credentials`.
+      - `Connection Name` -> Name for the connection
+      - `GitLab Host URL` -> Complete URL to the GitLab server e.g. https://gitlab.mydoamin.com
+      - `Credentials` -> Has to be API token, select existing or create new as `GitLab API token`
+        - Go to your `GitLab Profile > Preferences > Access Tokens > Create`
+        - Set an `Expiration Date`, and select `api` for scopes, or enable as needed, and create.
+        - Take note of API token
+        - `Add Credentials` in Jenkins as `GitLab API token`, then paste in the API token, adjust other information as needed.
+   3. Enable authentication for '/project' end-point
+   4. Save.
+3. Go to your project in Jenkins `> Configure`
+   1. Under `GitLab Connection`, select the connection you just created.
+   2. Under `Source Code Management`:
+      1. Select `Git`.
+      2. Enter the `Repository URL` e.g. `https://git.mydomain.com/something.git`.
+      3. Select your `Credentials`
+         - `Credentials` -> Use existing or create new under Global: `__Username with password__`, then enter information as needed.
+      4. Specify any branches as needed.
+   3. Under `Build Triggers`
+      1. Enable `Build when a change is pushed to GitLab`, take note of the `GitLab Webhook URL`
+      2. Enable triggers and settings as needed.
+      3. Go to `Advanced`, enable options as needed.
+      4. At `Secret Token`, generate a new secret token and take note of it.
+      5. Go to your GitLab project and create a `Webhook`, enter the `Webhook URL` provided earlier, as well as the `Secret Token`, and enable triggers as needed.
+      6. Save.
