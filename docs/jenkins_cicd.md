@@ -17,6 +17,7 @@ Stage 5: Deployment
 |4| [Custom Agents](#creating-custom-agents) |
 |5| [Deployment / Jenkinsfile example](#deployment--jenkinsfile-example) |
 |6| [Configuring GitLab with Jenkins](#integrating-gitlab-with-jenkins) |
+|7| [Securing Jenkins & Reverse Proxy / localhost Forwarding](#securing-jenkins--reverse-proxy--localhost-forwarding) |
 
 
 ## References
@@ -284,3 +285,104 @@ https://docs.gitlab.com/ee/integration/jenkins.html
       4. At `Secret Token`, generate a new secret token and take note of it.
       5. Go to your GitLab project and create a `Webhook`, enter the `Webhook URL` provided earlier, as well as the `Secret Token`, and enable triggers as needed.
       6. Save.
+
+## Securing Jenkins & [Reverse Proxy](#reverse-proxy-using-nginx) / [localhost forwarding](#localhost-forwarding-using-localtunnel)
+
+By default, if Jenkins is set up on a local host, Jenkins will not be reachable if requests are sent to it. Therefore, a `reverse proxy` will need to be set up.
+   - `Reverse Proxy` is a server that sits between client devices and web servers, forwarding client requests to the web server then returning the server's response back to the clients.
+
+(Incomplete Section)
+### Reverse Proxy using Nginx (Safer)
+1. Install Nginx using `sudo apt update` and `sudo apt install nginx`
+2. Start Nginx using `sudo systemctl start nginx`
+3. Enable Nginx using `sudo systemctl enable nginx`
+4. Create a configuration file for the Jenkins site using `sudo nano /etc/nginx/sites-available/jenkins`
+5. Enter the following configuration:
+   ```
+   upstream jenkins {
+      keepalive 32; # keepalive connections
+      server 127.0.0.1:8080; # jenkins ip and port
+   }
+
+   # Required for Jenkins websocket agents
+   map $http_upgrade $connection_upgrade {
+      default upgrade;
+      '' close;
+   }
+
+   server {
+      listen          80;       # Listen on port 80 for IPv4 requests
+
+      server_name     jenkins.example.com;  # replace 'jenkins.example.com' with your server domain name
+
+      # this is the jenkins web root directory
+      # (mentioned in the output of "systemctl cat jenkins")
+      root            /var/run/jenkins/war/;
+
+      access_log      /var/log/nginx/jenkins.access.log;
+      error_log       /var/log/nginx/jenkins.error.log;
+
+      # pass through headers from Jenkins that Nginx considers invalid
+      ignore_invalid_headers off;
+
+      location ~ "^/static/[0-9a-fA-F]{8}\/(.*)$" {
+         # rewrite all static files into requests to the root
+         # E.g /static/12345678/css/something.css will become /css/something.css
+         rewrite "^/static/[0-9a-fA-F]{8}\/(.*)" /$1 last;
+      }
+
+      location /userContent {
+         # have nginx handle all the static requests to userContent folder
+         # note : This is the $JENKINS_HOME dir
+         root /var/lib/jenkins/;
+         if (!-f $request_filename){
+            # this file does not exist, might be a directory or a /**view** url
+            rewrite (.*) /$1 last;
+            break;
+         }
+         sendfile on;
+      }
+
+      location / {
+         sendfile off;
+         proxy_pass         http://jenkins;
+         proxy_redirect     default;
+         proxy_http_version 1.1;
+
+         # Required for Jenkins websocket agents
+         proxy_set_header   Connection        $connection_upgrade;
+         proxy_set_header   Upgrade           $http_upgrade;
+
+         proxy_set_header   Host              $http_host;
+         proxy_set_header   X-Real-IP         $remote_addr;
+         proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
+         proxy_set_header   X-Forwarded-Proto $scheme;
+         proxy_max_temp_file_size 0;
+
+         #this is the maximum upload size
+         client_max_body_size       10m;
+         client_body_buffer_size    128k;
+
+         proxy_connect_timeout      90;
+         proxy_send_timeout         90;
+         proxy_read_timeout         90;
+         proxy_request_buffering    off; # Required for HTTP CLI commands
+      }
+   }
+
+   ```
+6. Create a symlink to enable the configuration: `sudo ln -s /etc/nginx/sites-available/jenkins /etc/nginx/sites-enabled/`
+7. Test the configuration using `sudo nginx -t`
+8. Restart nginx using `sudo systemctl restart nginx`
+9. Ensure firewall allows inbound traffic on ports `80 (HTTP)` and `443 (HTTPS)`, `sudo ufw allow 'Nginx Full`
+
+(Optional SSL)
+9. Install Certbot: `sudo apt install certbot python3-certbot-nginx`
+10. Obtain an SSL certificate using `sudo certbot --nginx -d your_domain.com`
+11. As Certbot sets up a cron job for automatic renewal, you can test renewal with `sudo certbot renew --dry-run`
+12. You can now access with either `http://your-domain.com` or `https://your-domain.com` if you have SSL.
+
+### localhost forwarding using LocalTunnel (Less Safer)
+1. Install localtunnel using node.js: `npm install -g localtunnel`
+2. Run localtunnel listening to a port using `lt --port 8080`, assuming Jenkins is running locally on port 8080
+3. To get custom subdomain: use `lt --port 8080 --subdomain custom_subdomain`
