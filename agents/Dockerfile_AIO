@@ -1,16 +1,15 @@
 FROM jenkins/inbound-agent:latest
 USER root
 
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-
 RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    gnupg2 \
     docker.io \
     build-essential \
     libssl-dev \
-    gnupg2 \
     python3 \
     python3-pip \
-    curl \
     cppcheck \
     clang-tidy \
     php \
@@ -18,7 +17,7 @@ RUN apt-get update && apt-get install -y \
     php-zip \
     nodejs \
     npm \
-    && run -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
 # installing codesniffer + verification
 RUN curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar \
@@ -50,5 +49,8 @@ RUN node -v && npm -v
 RUN npm install -g newman \
     && newman -v
 
+# change back to jenkins user
 USER jenkins
 
+# set working directory
+WORKDIR /home/jenkins

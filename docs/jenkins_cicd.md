@@ -377,10 +377,11 @@ By default, if Jenkins is set up on a local host, Jenkins will not be reachable 
 9. Ensure firewall allows inbound traffic on ports `80 (HTTP)` and `443 (HTTPS)`, `sudo ufw allow 'Nginx Full`
 
 (Optional SSL)
-9. Install Certbot: `sudo apt install certbot python3-certbot-nginx`
-10. Obtain an SSL certificate using `sudo certbot --nginx -d your_domain.com`
-11. As Certbot sets up a cron job for automatic renewal, you can test renewal with `sudo certbot renew --dry-run`
-12. You can now access with either `http://your-domain.com` or `https://your-domain.com` if you have SSL.
+
+10. Install Certbot: `sudo apt install certbot python3-certbot-nginx`
+11. Obtain an SSL certificate using `sudo certbot --nginx -d your_domain.com`
+12. As Certbot sets up a cron job for automatic renewal, you can test renewal with `sudo certbot renew --dry-run`
+13. You can now access with either `http://your-domain.com` or `https://your-domain.com` if you have SSL.
 
 ### localhost forwarding using LocalTunnel (Less Safer)
 1. Install localtunnel using node.js: `npm install -g localtunnel`
