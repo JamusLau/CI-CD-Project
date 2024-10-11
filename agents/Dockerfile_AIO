@@ -19,6 +19,9 @@ RUN apt-get update && apt-get install -y \
     npm \
     && rm -rf /var/lib/apt/lists/*
 
+# install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 # installing codesniffer + verification
 RUN curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar \
     && curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar \
@@ -30,18 +33,12 @@ RUN phpcs -h && phpcbf -h
 
 # installing .NET SDK 6.0
 RUN apt-get update && apt-get install -y \
-    wget \
     && wget https://dot.net/v1/dotnet-install.sh \
     && bash dotnet-install.sh --channel 6.0 \
     && rm dotnet-install.sh
 
 # adding .NET to PATH
 ENV PATH="$PATH:/root/.dotnet"
-
-# install resharper static code analysis
-# Run using 'jb inspectcode YourSolution.sln -o=<PathToOutputFile>' to inspect code
-# Run using 'jb cleanupcode YourSolution.sln' to lint code
-RUN dotnet tool install -g JetBrains.ReSharper.GlobalTools
 
 # check if node and npm is installed
 RUN node -v && npm -v
