@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     php-zip \
     nodejs \
     npm \
+    sudo \
     && rm -rf /var/lib/apt/lists/*
 
 # install composer
@@ -45,6 +46,12 @@ RUN node -v && npm -v
 
 RUN npm install -g newman \
     && newman -v
+
+# installing resharper
+RUN dotnet tool install -g JetBrains.ReSharper.GlobalTools
+
+# add jenkins to sudo group
+RUN usermod -aG sudo jenkins
 
 # change back to jenkins user
 USER jenkins
