@@ -12,13 +12,13 @@ To do unit testing for php scripts, we will be using `phpunit`.
 https://phpunit.de/documentation.html
 
 ## Setup
-### Step 1: Windows
+### Step 1: Getting PHP - Windows
 1. Get the PHP zip by using this link: https://windows.php.net/download/.
 2. Download the Non Thread Safe version, and extract it into a directory like C:/php.
 3. Add PHP to your environment variables and verify using `php --version` in Windows CLI.
 4. Go to the php foder and go into php.ini, and uncomment / add `extension=phar` and `extension=mbstring`.
 
-### Step 1: Ubuntu
+### Step 1: Getting PHP - Ubuntu
 ```
 sudo apt update
 sudo apt install php-cli \
@@ -28,7 +28,20 @@ sudo apt install php-cli \
                  php-pcov \
                  php-xdebug
 ```
-### Step 2: Both
+### Step 2: Setup PHPUnit
+#### Method 1 (Project via Composer)
+1. Install Composer: `curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer`
+2. Navigate to your project directory
+3. Require PHPUnit as a development dependency using `composer require --dev phpunit/phpunit`
+4. Verify using `./vendor/bin/phpunit --version`
+
+#### Method 2 (Global via Composer)
+1. Require PHPUnit globally by using `composer global require phpunit/phpunit`
+2. Ensure PHPUnit is in the path: `export PATH="$HOME/.composer/vendor/bin:$PATH"`
+3. `source ~/.bashrc`
+4. Verify using `phpunit --version`
+
+#### Method 3 (Manual Installation)
 1. Create a tools folder and tests folder at the root of the project (will be used later).
 2. Using wsl / ubuntu, navigate to the root of the project and download the phpunit php archive (.phar)
 ```
@@ -36,7 +49,12 @@ wget -O phpunit.phar https://phar.phpunit.de/phpunit-10.phar
 chmod +x phpunit.phar
 mv phpunit.phar tools
 ```
-3. Change these settings in the php.ini:
+
+### Method 4 (Ubuntu)
+1. `sudo apt-get install phpunit`
+
+### Step 3: Settings
+Change these settings in the php.ini:
 ```
 error_reporting=-1
 xdebug.show_exception_trace=0
@@ -124,6 +142,42 @@ final class GreetingTest extends TestCase
 ```
 ## Testing
 Run the php scripts in the `tests` folder using `php ./tools/phpunit.phar path/to/test/file.php`
+
+## Showing Code Coverage
+1. Install and enable either `PCOV` or `xdebug`
+    - Configure `xdebug`:
+    ```bash
+    echo "zend_extension=$(find /usr/lib/php -name xdebug.so | head -n 1)" >> /etc/php/version/cli/php.ini \
+    && echo "zend_extension=$(find /usr/lib/php -name xdebug.so | head -n 1)" >> /etc/php/<version>/apache2/php.ini \
+    && echo "xdebug.mode=debug" >> /etc/php/<version>/cli/php.ini \
+    && echo "xdebug.start_with_request=yes" >> /etc/php/<version>/cli/php.ini \
+    && echo "xdebug.client_host=host.docker.internal" >> /etc/php/version/cli/php.ini \
+    && echo "xdebug.client_port=9003" >> /etc/php/version/cli/php.ini
+    ```
+2. Create a `phpunit.xml` at the project root with the following configuration:
+   ```xml
+   <xml version="1.0" encoding="UTF-8"?>
+    <phpunit>
+        <coverage> <!-- specifies which directories of src files to include-->
+            <include>
+                <directory>
+                    ./src <!-- Set to your source directory to check-->
+                </directory>
+            </include>
+        </coverage>
+        <testsuites> <!-- directory of tests-->
+            <testsuite name="TestSuite Name"> <!-- Suite of tests-->
+                <directory>
+                    ./path/to/tests
+                </directory>
+            </testsuite>
+        </testsuites>
+    </phpunit>
+   ```
+3. Ensure there are tests written in a directory e.g. `./tests`
+4. Run the code coverage command:
+    - To get a `html` file, use `phpunit --coverage-html path/to/report`
+    - To get a `xml` file (readable by pipelines), use `phpunit --coverage-clover /path/to/file.xml`
 
 # Newman
 ## Overview

@@ -12,12 +12,14 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     cppcheck \
     clang-tidy \
-    php \
-    php-xml \
-    php-zip \
+    php8.2 \
+    php8.2-xml \
+    php8.2-zip \
+    php8.2-xdebug \
+    php8.2-pcov \
+    php8.2-mbstring \
     nodejs \
     npm \
-    sudo \
     && rm -rf /var/lib/apt/lists/*
 
 # install composer
@@ -31,6 +33,14 @@ RUN curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar \
     && mv phpcbf.phar /usr/local/bin/phpcbf
 
 RUN phpcs -h && phpcbf -h
+
+# setup xdebug in php
+RUN echo "zend_extension=$(find /usr/lib/php -name xdebug.so | head -n 1)" >> /etc/php/8.2/cli/php.ini \
+&& echo "zend_extension=$(find /usr/lib/php -name xdebug.so | head -n 1)" >> /etc/php/8.2/apache2/php.ini \
+&& echo "xdebug.mode=debug" >> /etc/php/8.2/cli/php.ini \
+&& echo "xdebug.start_with_request=yes" >> /etc/php/8.2/cli/php.ini \
+&& echo "xdebug.client_host=host.docker.internal" >> /etc/php/8.2/cli/php.ini \
+&& echo "xdebug.client_port=9003" >> /etc/php/8.2/cli/php.ini
 
 # installing .NET SDK 6.0
 RUN apt-get update && apt-get install -y \
@@ -49,9 +59,6 @@ RUN npm install -g newman \
 
 # installing resharper
 RUN dotnet tool install -g JetBrains.ReSharper.GlobalTools
-
-# add jenkins to sudo group
-RUN usermod -aG sudo jenkins
 
 # change back to jenkins user
 USER jenkins
