@@ -35,12 +35,8 @@ RUN curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar \
 RUN phpcs -h && phpcbf -h
 
 # setup xdebug in php
-RUN echo "zend_extension=$(find /usr/lib/php -name xdebug.so | head -n 1)" >> /etc/php/8.2/cli/php.ini \
-&& echo "zend_extension=$(find /usr/lib/php -name xdebug.so | head -n 1)" >> /etc/php/8.2/apache2/php.ini \
-&& echo "xdebug.mode=debug" >> /etc/php/8.2/cli/php.ini \
-&& echo "xdebug.start_with_request=yes" >> /etc/php/8.2/cli/php.ini \
-&& echo "xdebug.client_host=host.docker.internal" >> /etc/php/8.2/cli/php.ini \
-&& echo "xdebug.client_port=9003" >> /etc/php/8.2/cli/php.ini
+RUN echo "zend_extension=xdebug.so" | tee -a /etc/php/8.2/cli/php.ini \
+    && echo "xdebug.mode=coverage" | tee -a /etc/php/8.2/cli/php.ini
 
 # installing .NET SDK 6.0
 RUN apt-get update && apt-get install -y \

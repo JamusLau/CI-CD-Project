@@ -145,7 +145,7 @@ Run the php scripts in the `tests` folder using `php ./tools/phpunit.phar path/t
 
 ## Showing Code Coverage
 1. Install and enable either `PCOV` or `xdebug`
-    - Configure `xdebug`:
+    - Configure `xdebug (dockerfile)`:
     ```bash
     echo "zend_extension=$(find /usr/lib/php -name xdebug.so | head -n 1)" >> /etc/php/version/cli/php.ini \
     && echo "zend_extension=$(find /usr/lib/php -name xdebug.so | head -n 1)" >> /etc/php/<version>/apache2/php.ini \
@@ -153,6 +153,11 @@ Run the php scripts in the `tests` folder using `php ./tools/phpunit.phar path/t
     && echo "xdebug.start_with_request=yes" >> /etc/php/<version>/cli/php.ini \
     && echo "xdebug.client_host=host.docker.internal" >> /etc/php/version/cli/php.ini \
     && echo "xdebug.client_port=9003" >> /etc/php/version/cli/php.ini
+    ```
+    - Configure `xdebug (cli)`:
+    ```bash
+    echo "zend_extension=xdebug.so" | sudo tee -a /path/to/php.ini
+    echo "xdebug.mode=coverage" | sudo tee -a /path/to/php.ini
     ```
 2. Create a `phpunit.xml` at the project root with the following configuration:
    ```xml
