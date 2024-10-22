@@ -196,7 +196,7 @@ To run tests using Newman:
 ```sh
 newman run path/to/collection.json -e path/to/environment.json --reporters cli, junit --reporter-junit-export ./output/results.xml
 ```
-- `-e` specifies the environment file loaction.
+- `-e` specifies the environment file location.
 - `--reporters` specifies which reporters to use.
 - `--reporter-junit-export` exports the report in the Junit format
 Note: not all options have to be used.

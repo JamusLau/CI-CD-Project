@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
     php8.2-xdebug \
     php8.2-pcov \
     php8.2-mbstring \
+    phpunit \
     nodejs \
     npm \
     && rm -rf /var/lib/apt/lists/*
@@ -52,9 +53,6 @@ RUN node -v && npm -v
 
 RUN npm install -g newman \
     && newman -v
-
-# installing resharper
-RUN dotnet tool install -g JetBrains.ReSharper.GlobalTools
 
 # change back to jenkins user
 USER jenkins

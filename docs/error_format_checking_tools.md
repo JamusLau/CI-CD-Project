@@ -3,7 +3,7 @@
 |:-:|:-:|
 |PHP|[PHP_CodeSniffer](#php_codesniffer)|
 |PHP|[PHPStan](#phpstan)|
-|.NET|[ReSharper Global Tools](#resharper)|
+|.NET|[ReSharper Global Tools](#resharper-global-tools)|
 |.NET|[Roslyn Analyzers](#roslyn-analyzers)|
 
 
@@ -31,10 +31,15 @@ php phpcs.phar -h
 php phpcbf.phar -h
 ```
 
+or
+
+`sudo apt install php-codesniffer`
+
 ### Usage
 Checking against PEAR coding standard (file): `phpcs /path/to/code/file.php` \
 Checking against PEAR coding standard (directory): `phpcs /path/to/directory` \
 Checking against PSR-12 coding standard: `phpcs --standard=PSR12 /path/to/directory`
+Checking the files without using a standard, only syntax: `phpcs --standard=Generic --sniffs=Generic.PHP.Syntax /path/`
 
 # [PHPStan](#https://phpstan.org/user-guide/getting-started)
 ### Requirements
