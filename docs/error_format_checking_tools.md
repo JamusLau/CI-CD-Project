@@ -5,6 +5,7 @@
 |PHP|[PHPStan](#phpstan)|
 |.NET|[ReSharper Global Tools](#resharper-global-tools)|
 |.NET|[Roslyn Analyzers](#roslyn-analyzers)|
+|JavaScript|[ESLint](#eslint)|
 
 
 # [PHP_CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer/)
@@ -107,3 +108,6 @@ https://www.jetbrains.com/help/resharper/InspectCode.html#command-line-parameter
     - `dotnet restore YourSolution.sln`
     - `dotnet build YourSolution.sln`
     - `dotnet build YourSolution.sln /p:RunAnalyzers=true`
+
+
+# ESLint

@@ -4,6 +4,7 @@
 |PHP|[PHPUnit](#phpunit)|
 |PHP|[Newman](#newman)|
 |.NET|[Unity](#unity-engine)|
+|JavaScript|[Jest](#jest)|
 
 # PHPUnit
 ## Overview
@@ -227,3 +228,39 @@ An example of a environment.json file:
 
 ## Useful Links
 https://docs.unity3d.com/Packages/com.unity.test-framework%401.1/manual/reference-command-line.html
+
+# Jest
+## Installation
+1. Use `npm install --save-dev jest`
+
+## Usage
+1. If the source file is called `sum.js`, the test file should be called `sum.test.js`
+   sum.js:
+   ```js
+    function sum(a, b) {
+        return a + b;
+    }
+    module.exports = sum;
+   ```
+
+   sum.test.js:
+   ```js
+    const sum = require ('./sum');
+    test('adds 1 + 2 to equal 3', () => {
+        expect(sum(1, 2)).toBe(3);
+    });
+   ```
+
+2. Add the script to `package.json`:
+```js
+{
+    "scripts": {
+        "test": "jest"
+    }
+}
+```
+
+3. Run the tests using `npm test`
+
+## References
+https://jestjs.io/docs/getting-started
