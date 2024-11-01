@@ -64,11 +64,11 @@ The idea is that after testing and when the Jenkins build project runs, a HTTP r
     import java.io.*;
     import java.net.Inet4Address;
     import java.net.InetAddress;
-    import java.net.InetSocketAddress;;
+    import java.net.InetSocketAddress;
+    import java.util.HashMap;
     
     public class JenkinsListener {
         public static void main(String[] args) throws IOException {
-               // starts the server on the port
             HttpServer server = HttpServer.create(new InetSocketAddress(8081), 0);
     
             server.createContext("/", new MyHandler());
@@ -79,6 +79,14 @@ The idea is that after testing and when the Jenkins build project runs, a HTTP r
         }
     
         static class MyHandler implements HttpHandler {
+    
+            //hash map to store list of all trigger words and paths to shell scripts
+            private static final HashMap<String, String> triggerWordPaths = new HashMap<String, String>();
+            static {
+                triggerWordPaths.put("buildWindows", "./runWindowsBuild.sh");
+                triggerWordPaths.put("testUnity", "./runUnityTests.sh");
+            }
+            
             @Override
             // handles requests
             public void handle(HttpExchange exchange) throws IOException {
@@ -94,18 +102,14 @@ The idea is that after testing and when the Jenkins build project runs, a HTTP r
                     System.out.println("Received POST request: " + requestBody.toString());
     
                     // check whether the request body contains the required text to build
-                    String triggerText = "buildWindows"; // this is your trigger word!
-                    String responseMessage;
-                    int responseCode;
+                    String responseMessage = "";
+                    int responseCode = 0;
     
-                    // runs the build script
-                    if (requestBodyString.contains(triggerText)) {
-                        runWindowsBuild();
-                        responseMessage = "Received windows build trigger from Jenkins";
-                        responseCode = 201;
-                    } else {
-                        responseMessage = "Received invalid build trigger from Jenkins";
-                        responseCode = 406;
+                    // checks for trigger word if exist, then run shell script if exist
+                    if (triggerWordPaths.containsKey(requestBodyString)) {
+                        responseMessage = "Received trigger [" + requestBodyString + "] from Jenkins";
+                        responseCode = 200;
+                        runShellScript(triggerWordPaths.get(requestBodyString));
                     }
                     
                     // sends the response after it has been set
@@ -124,28 +128,28 @@ The idea is that after testing and when the Jenkins build project runs, a HTTP r
             }
         }
     
-        public static void runWindowsBuild() {
-           // set this path to the shell script you will run when the trigger word is detected
-            String scriptPath = "./runWindowsBuild.sh";
-            ProcessBuilder processBuilder = new ProcessBuilder(scriptPath);
+        public static int runShellScript(String shellScriptPath) {
+            ProcessBuilder processBuilder = new ProcessBuilder(shellScriptPath);
             processBuilder.redirectErrorStream(true);
-             try {
+            int exitCode = 1;
+            try {
                 Process process = processBuilder.start();
                 
                 //capture output from script
                 InputStream iS = process.getInputStream();
                 BufferedReader bR = new BufferedReader(new InputStreamReader(iS));
-                StringBuilder output = new StringBuilder();
+                // printing live output of the script line by line
                 String scriptline;
                 while ((scriptline = bR.readLine()) != null) {
-                    output.append(scriptline).append("\n");
+                    System.out.println(scriptline);
                 }
-                System.out.println("Script output: " + output.toString());
-                int exitCode = process.waitFor();
-                System.out.println("script exited with code: " + exitCode);
-             } catch (IOException | InterruptedException e) {
+                // waitingfor exit code
+                exitCode = process.waitFor();
+                System.out.println("Script exited with code: " + exitCode);
+            } catch (IOException | InterruptedException e) {
                 System.err.println("Error executing script: " + e.getMessage());
-             }
+            }
+            return exitCode;
         }
     }
    ```
@@ -158,8 +162,40 @@ The idea is that after testing and when the Jenkins build project runs, a HTTP r
 4. Create a shell script that will clone the repository and build the project using Unity:
    ```sh
     echo Building the windows build
-    git clone --branch <branch name> --depth 1 https://username:password@git.gitproject.git ./project/filepath/dest
-    Unity -i -batchmode -nographics -quit -projectPath "path/to/project" -buildTarget <target> -outputPath "path/to/build.exe" -logFile "path/to/log.txt"
+    PROJECT_PATH="./Project"
+    BUILD_PATH="./Build"
+    
+    if [ -d "$PROJECT_PATH" ]; then 
+        echo "Removing old project folder"
+        rm -rf "$PROJECT_PATH"
+    fi
+    
+    if [ -d "$BUILD_PATH" ]; then 
+        echo "Removing old project folder"
+        rm -rf "$BUILD_PATH"
+    fi
+    
+    echo Cloning the repo...
+    git clone --branch Dev-Main --depth 1 https://username:password@git.gitlabproject.com/project.git ./Project
+    echo Cloning into $PROJECT_PATH done...
+    
+    echo Building the project...
+    Unity -nographics -batchmode -quit -projectPath "./Project/" -buildLinux64Player "../../Build/App.x86_64" -logFile "./Build/Build_Log.txt"
+    echo Building is done...
+    
+    cd $BUILD_PATH
+    
+    echo Compiling Server zip
+    cp App.x86_64 server.x86_64
+    zip -r VCServer.zip server.x86_64 App_Data UnityPlayer.so
+    rm server.x86_64
+    echo Server zip compiling done
+    
+    echo Compiling Client zip
+    cp App.x86_64 client.x86_64
+    zip -r VCClient.zip client.x86_64 App_Data UnityPlayer.so
+    rm client.x86_64
+    echo Client zip compiling done
    ```
 
 ### References
