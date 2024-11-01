@@ -107,9 +107,15 @@ The idea is that after testing and when the Jenkins build project runs, a HTTP r
     
                     // checks for trigger word if exist, then run shell script if exist
                     if (triggerWordPaths.containsKey(requestBodyString)) {
-                        responseMessage = "Received trigger [" + requestBodyString + "] from Jenkins";
                         responseCode = 200;
-                        runShellScript(triggerWordPaths.get(requestBodyString));
+                        int success = runShellScript(triggerWordPaths.get(requestBodyString));
+                        
+                        // return a response based on the exit code to Jenkins, so Jenkins can mark it as success / failure
+                        if (success == 0) {
+                            responseMessage = "Status of request of [" + requestBodyString + "] is [SUCCESS]";
+                        } else {
+                            responseMessage = "Status of request of [" + requestBodyString + "] is [FAILURE]";
+                        }
                     }
                     
                     // sends the response after it has been set
