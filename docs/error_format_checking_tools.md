@@ -112,3 +112,11 @@ https://www.jetbrains.com/help/resharper/InspectCode.html#command-line-parameter
 
 # [ESLint](https://eslint.org/)
 ### Requirements
+- Node.js (^18.18.0, ^20.9.0, or >=21.1.0)
+
+### Installation
+- Use ```npm init @eslint/config@latest``` (Ensure there is already a package.json, if not run ```npm init``` first.
+
+### Usage
+- Use on file: ```npx eslint yourfile.js```
+- Use on directory: ```npx eslint /path/to/directory```
