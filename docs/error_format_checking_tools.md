@@ -110,4 +110,5 @@ https://www.jetbrains.com/help/resharper/InspectCode.html#command-line-parameter
     - `dotnet build YourSolution.sln /p:RunAnalyzers=true`
 
 
-# ESLint
+# [ESLint](https://eslint.org/)
+### Requirements
