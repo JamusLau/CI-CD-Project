@@ -202,6 +202,20 @@ newman run path/to/collection.json -e path/to/environment.json --reporters cli, 
 - `--reporter-junit-export` exports the report in the Junit format
 Note: not all options have to be used.
 
+Example of using collection with environment:
+```sh
+echo "Running Newman Tests..."
+for collection in ./tests/Newman/*_collection.json; do
+    # env="${collection/_collection/_environment}"
+    env=$(echo "$collection" | sed 's/_collection/_environment/')
+    if [ -f "$env" ]; then
+        newman run "$collection" -e "$env" --reporters cli,junit --reporter-junit-export "./output/Newman/$(basename "$collection" _collection.json)_results.xml"
+    else 
+        echo "Corresponding environment file for "$collection" not found!"
+        echo "Did you name it correctly?"
+    fi
+done;
+```
 ### collection.json
 A `Collection` is a group of API requests that you defined in Poastman. It can include HTTP methods like GET, POST, PUT, DELETE, headers, body data etc, and any neccessary configurations required for each request. Allows you to run related API tests together.
 
