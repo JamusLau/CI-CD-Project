@@ -234,6 +234,9 @@ An example of a environment.json file:
 
 ```
 
+## Using with Jenkins
+https://learning.postman.com/docs/collections/using-newman-cli/integration-with-jenkins/ \
+
 # Unity Engine
 ## Usage
 1. Ensure that there is a folder named `Tests` in the Unity project folder.
