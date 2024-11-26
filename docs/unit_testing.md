@@ -236,6 +236,10 @@ An example of a environment.json file:
 
 ## Using with Jenkins
 https://learning.postman.com/docs/collections/using-newman-cli/integration-with-jenkins/ \
+1. Install the NodeJS plugin in Jenkins.
+2. Under Manage Jenkins > Tools > NodeJS Installations, add a NodeJS installation, and add `newman` to list of global npm packages.
+3. Inside the Freestyle Project > Build Environment > Select `Provide node & npm bin/ folder to PATH`.
+4. Add a build step: execute shell, to run the newman command.
 
 # Unity Engine
 ## Usage
