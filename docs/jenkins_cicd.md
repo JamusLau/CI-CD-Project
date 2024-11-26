@@ -49,12 +49,29 @@ Use `docker network ls` to verify.
 
 ### 3. Run the Jenkins container and connect to it locally.
 ```powershell
-docker run --name jenkins-blueocean --restart=on-failure --detach `
-  --network jenkins --env DOCKER_HOST=tcp://docker:2376 `
-  --env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=1 `
-  --volume jenkins-data:/var/jenkins_home `
-  --volume jenkins-docker-certs:/certs/client:ro `
-  --publish 8080:8080 --publish 50000:50000 myjenkins-blueocean:<version>
+docker run --name jenkins-blueocean --restart=on-failure --detach \
+  --network jenkins \
+  --env DOCKER_HOST=tcp://docker:2376 \
+  --env DOCKER_CERT_PATH=/certs/client \
+  --env DOCKER_TLS_VERIFY=1 \
+  --volume jenkins-data:/var/jenkins_home \
+  --volume jenkins-docker-certs:/certs/client:ro \
+  --publish 8080:8080 \
+  --publish 50000:50000 myjenkins-blueocean:<version>
+```
+```
+docker run --name jenkins-blueocean \
+--restart=on-failure --detach \
+--network jenkins \
+--add-host=host.docker.internal:host-gateway \
+--env DOCKER_HOST=tcp://docker:2376 \
+--env DOCKER_CERT_PATH=/certs/client \
+--env DOCKER_TLS_VERIFY=1 \
+--volume jenkins-data:/var/jenkins_home \
+--volume jenkins-docker-certs:/certs/client:ro \
+--mount type=bind,source=/home/virtualcampus/Desktop/mongo-s3/mongodb-localstack/,target=/var/mongo/ \
+--publish 8080:8080 \
+--publish 50000:50000 my-jenkins-blueocean-latest
 ```
 
 Verify the IP using `docker ps` or use `https://localhost:8080` to connect and access the Jenkins GUI.
