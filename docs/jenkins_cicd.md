@@ -69,7 +69,7 @@ docker run --name jenkins-blueocean \
 --env DOCKER_TLS_VERIFY=1 \
 --volume jenkins-data:/var/jenkins_home \
 --volume jenkins-docker-certs:/certs/client:ro \
---mount type=bind,source=/home/virtualcampus/Desktop/mongo-s3/mongodb-localstack/,target=/var/mongo/ \
+--mount type=bind,source=/home/virtualcampus/Desktop/mongo-s3/mongodb-localstack/,target=/var/jenkins_home/mongo/ \
 --publish 8080:8080 \
 --publish 50000:50000 my-jenkins-blueocean-latest
 ```
